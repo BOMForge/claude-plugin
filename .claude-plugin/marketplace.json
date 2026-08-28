@@ -3,7 +3,7 @@
   "owner": { "name": "BOMForge, Inc.", "url": "https://bomforge.com" },
   "metadata": {
     "description": "Official BOMForge plugins for Claude Code.",
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "plugins": [
     {
