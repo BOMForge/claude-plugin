@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "bomforge": {
+      "type": "http",
+      "url": "${BOMFORGE_MCP_URL:-https://bomforge.com/mcp}",
+      "headers": {
+        "Authorization": "Bearer ${BOMFORGE_API_KEY}"
+      }
+    }
+  }
+}

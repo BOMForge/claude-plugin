@@ -1,0 +1,10 @@
+{
+  "name": "bomforge",
+  "displayName": "BOMForge Supplier Intelligence",
+  "version": "0.1.0",
+  "description": "Find, resolve, qualify and compare manufacturers from a part, BOM, process, material, certification or geography, with provenance. Requires a BOMForge API key (Pro and higher plans).",
+  "author": { "name": "BOMForge, Inc.", "url": "https://bomforge.com" },
+  "homepage": "https://bomforge.com/docs/api/mcp",
+  "repository": "https://github.com/BOMForge/claude-plugin",
+  "keywords": ["manufacturing", "procurement", "suppliers", "bom", "sourcing", "mcp"]
+}
