@@ -1,10 +1,10 @@
-# BOMForge for Claude Code
+# BOMForge for Claude Code and Codex
 
 Supplier discovery and qualification against the BOMForge index, inside Claude Code: a `/bomforge` skill that knows how to use the tools, plus the tools themselves over MCP.
 
 Requires a BOMForge API key. Keys are minted per organization at https://bomforge.com/settings/api on Pro and higher plans.
 
-## Install
+## Install in Claude Code
 
 ```bash
 export BOMFORGE_API_KEY=bf_live_...     # add to ~/.zshrc or ~/.bashrc
@@ -19,6 +19,23 @@ Restart Claude Code, then:
 ```
 
 or just ask in plain language; the skill is picked up automatically when the task is about suppliers.
+
+## Install in Codex
+
+Set `BOMFORGE_API_KEY` in the environment that launches Codex, then install:
+
+```bash
+codex plugin marketplace add BOMForge/claude-plugin
+codex plugin add bomforge@bomforge
+```
+
+Start a new Codex session and invoke:
+
+```text
+$bomforge Find 5-axis titanium machining suppliers with AS9100 near Dayton
+```
+
+The plugin includes the skill, ASCII factory banner, and an MCP connection that reads `BOMFORGE_API_KEY` from the environment. No credential is stored in the package. Explicit invocation shows the banner; automatic supplier-sourcing use omits it.
 
 ## What you get
 

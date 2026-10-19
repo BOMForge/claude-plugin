@@ -1,16 +1,24 @@
 {
   "name": "bomforge",
-  "owner": { "name": "BOMForge, Inc.", "url": "https://bomforge.com" },
+  "owner": {
+    "name": "BOMForge, Inc.",
+    "url": "https://bomforge.com"
+  },
   "metadata": {
-    "description": "Official BOMForge plugins for Claude Code.",
-    "version": "0.1.1"
+    "description": "Official BOMForge skills and MCP tools for Claude Code and Codex.",
+    "version": "0.1.2"
   },
   "plugins": [
     {
       "name": "bomforge",
       "source": "./",
       "description": "Supplier discovery and qualification against the BOMForge index, as a /bomforge skill plus MCP tools.",
-      "tags": ["manufacturing", "procurement", "suppliers", "mcp"]
+      "tags": [
+        "manufacturing",
+        "procurement",
+        "suppliers",
+        "mcp"
+      ]
     }
   ]
 }

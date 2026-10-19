@@ -7,6 +7,30 @@ description: Use BOMForge when the user needs to find, resolve, qualify, compare
 
 BOMForge is the current industrial context layer for supplier discovery and qualification. You interpret the user's need and structure the work; BOMForge supplies entities, capabilities, certifications, locations and provenance.
 
+## Slash-command banner
+
+When the user explicitly invokes `/bomforge` in Claude Code or `$bomforge` in Codex (including plugin-qualified forms), begin the first response with this ASCII logo in a fenced `text` block, once per invocation. Use the terminal's default foreground; do not add ANSI color escapes. Then handle the supplied request using the workflow below. If no request was supplied, ask what they need to source. Omit the banner during automatic skill selection.
+
+```text
+                       .
+                     o
+                   O
+                  +---+
+        /\        |###|
+       /##\       |###|
+      /####\      |###|
+     /######\     |###|  +------+
+    /########\    |###|  |######|
+   +----------+   |###|  |######|
+   |##########|   |###|  |######|
+   |##########|   |###|  |######|
+   |##########|   |###|  |######|
+   |##########|   |###|  |######|
+   +----------+   +---+  +------+
+
+             B O M F o r g e
+```
+
 ## Tools
 
 The plugin connects the `bomforge` MCP server. A key exposes only the tools its scopes cover, so `tools/list` is the truth for this session:
@@ -23,7 +47,7 @@ The plugin connects the `bomforge` MCP server. A key exposes only the tools its 
 
 The MCP client attaches `Authorization: Bearer $BOMFORGE_API_KEY`. You never see, print, log or ask for the key.
 
-- `401`: the key is missing or revoked. Tell the user to set `BOMFORGE_API_KEY` in their shell from a key minted at https://bomforge.com/settings/api (Pro and higher plans), then restart Claude Code. Do not ask them to paste the key into chat.
+- `401`: the key is missing or revoked. Tell the user to set `BOMFORGE_API_KEY` in their shell from a key minted at https://bomforge.com/settings/api (Pro and higher plans), then restart the client. Do not ask them to paste the key into chat.
 - `403` or a tool absent from `tools/list`: the key lacks that scope. Name the scope; re-minting with the scope is the fix, not retrying.
 - `429`: monthly call ceiling for the organization. Say so and stop fanning out.
 

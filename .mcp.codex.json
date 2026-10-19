@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "bomforge": {
+      "url": "https://bomforge.com/mcp",
+      "bearer_token_env_var": "BOMFORGE_API_KEY"
+    }
+  }
+}
