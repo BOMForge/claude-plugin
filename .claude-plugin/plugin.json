@@ -1,8 +1,8 @@
 {
   "name": "bomforge",
   "displayName": "BOMForge Supplier Intelligence",
-  "version": "0.1.2",
-  "description": "Find, resolve, qualify and compare manufacturers from a part, BOM, process, material, certification or geography, with provenance. Requires a BOMForge API key (Pro and higher plans).",
+  "version": "0.1.3",
+  "description": "Supplier discovery, BOM sourcing, and scoped workspace workflows with BOMForge. Requires a workspace API key.",
   "author": {
     "name": "BOMForge, Inc.",
     "url": "https://bomforge.com"

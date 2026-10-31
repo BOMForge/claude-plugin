@@ -1,6 +1,6 @@
 {
   "name": "bomforge",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Find and compare manufacturing suppliers with BOMForge.",
   "skills": "./skills/",
   "mcpServers": "./.mcp.codex.json"

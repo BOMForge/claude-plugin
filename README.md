@@ -2,7 +2,7 @@
 
 Supplier discovery and qualification against the BOMForge index, inside Claude Code: a `/bomforge` skill that knows how to use the tools, plus the tools themselves over MCP.
 
-Requires a BOMForge API key. Keys are minted per organization at https://bomforge.com/settings/api on Pro and higher plans.
+Requires a BOMForge API key. Workspace administrators configure scoped keys at https://bomforge.com/settings/api.
 
 ## Install in Claude Code
 
@@ -44,7 +44,7 @@ The plugin includes the skill, ASCII factory banner, and an MCP connection that 
 | `search_suppliers` | Candidates by capability, certification, material, location |
 | `get_supplier_profile` | One manufacturer in depth, by UUID, slug or name |
 | `match_parts_to_suppliers` | Best suppliers for one part description, 7-dimension scoring |
-| `check_certifications` | Required vs held certifications, optional SAM.gov check |
+| `check_certifications` | Required vs held certifications, optional federal contractor registration check |
 | `analyze_bom` | Up to 50 BOM lines, requirements inferred and matched per line |
 
 A key exposes only the tools its scopes cover.
@@ -72,8 +72,20 @@ claude mcp add --transport http bomforge https://bomforge.com/mcp \
   --header "Authorization: Bearer bf_live_..."
 ```
 
-## Data accuracy
+## Prompt library
 
-Profiles are indexed from public sources and AI-enriched. Capability and certification fields are extracted, not auditor-verified; export-control flags are inferred. Verify at the source of record named in each response before transmitting controlled data, awarding a contract or filing a regulatory document. Policy: https://bomforge.com/data-accuracy.
+Six read-only starters cover finding suppliers, sourcing a part, sourcing a BOM or assembly, comparing suppliers, checking certifications, and reviewing a workspace BOM. Copy them from [the bundled library](skills/bomforge/references/prompt-library.md) or [BOMForge documentation](https://bomforge.com/docs/api/mcp#prompt-library).
+
+MCP clients that support prompts can call `prompts/list` and `prompts/get` on the authenticated endpoint. The server exposes only workflows supported by the key's scopes and tenant context. Retrieving a prompt does not perform a search, edit records, or send email.
+
+## Additional workflows
+
+- `search_sourcing_brief` (`bom:analyze`) accepts summarized manufacturing work packages after local BOM interpretation.
+- `workspace:read` exposes project, BOM, bench, directive, and outbox reads for the key's workspace.
+- `workspace:write` supports authorized edits and draft updates. It does not send email.
+
+## Check the connection
+
+Start a new client session after installing or updating. Ask the agent to list the available BOMForge tools, then try a supplier search with a non-sensitive manufacturing requirement. The key's granted scopes determine the tools and prompts you see. Missing tools require an access change by a workspace administrator.
 
 Docs: https://bomforge.com/docs/api/mcp
