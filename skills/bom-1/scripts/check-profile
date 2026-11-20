@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+"""Read public BOMForge page titles for slugs returned by the supplier connector."""
+import argparse
+import json
+import re
+from concurrent.futures import ThreadPoolExecutor
+from html.parser import HTMLParser
+from urllib.error import URLError
+from urllib.request import HTTPRedirectHandler, Request, build_opener
+
+
+class TitleReader(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.in_title = False
+        self.parts = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "title":
+            self.in_title = True
+
+    def handle_endtag(self, tag):
+        if tag == "title":
+            self.in_title = False
+
+    def handle_data(self, data):
+        if self.in_title:
+            self.parts.append(data)
+
+
+class NoRedirect(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+def check(slug):
+    if not re.fullmatch(r"[a-z0-9][a-z0-9_-]{0,240}", slug):
+        return {"slug": slug, "status": "invalid_slug"}
+    url = "https://bomforge.com/companies/" + slug
+    request = Request(url, headers={"User-Agent": "BOMForge-Profile-Check/1.0"})
+    try:
+        with build_opener(NoRedirect()).open(request, timeout=10) as response:
+            reader = TitleReader()
+            reader.feed(response.read(131072).decode("utf-8", errors="replace"))
+    except (URLError, OSError) as exc:
+        return {"slug": slug, "status": "unavailable", "reason": str(exc)}
+    title = " ".join("".join(reader.parts).split())
+    if not title.endswith(" | BOMForge") or "company not found" in title.casefold():
+        return {"slug": slug, "status": "unconfirmed", "title": title}
+    return {"slug": slug, "status": "page_found", "title": title, "url": url}
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("slug", nargs="+", help="Company slug from a BOMForge profile.")
+    args = parser.parse_args()
+    with ThreadPoolExecutor(max_workers=3) as pool:
+        for result in pool.map(check, dict.fromkeys(args.slug)):
+            print(json.dumps(result))
