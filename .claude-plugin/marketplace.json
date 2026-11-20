@@ -12,7 +12,7 @@
     {
       "name": "bomforge",
       "source": "./",
-      "description": "Supplier discovery and qualification against the BOMForge index, as a /bomforge skill plus MCP tools.",
+      "description": "Find manufacturers for a part or bill of materials. Compare supplier capabilities, locations, and certification records with a BOMForge workspace key.",
       "tags": [
         "manufacturing",
         "procurement",

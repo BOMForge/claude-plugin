@@ -1,8 +1,14 @@
 # BOMForge for Claude Code and Codex
 
-Supplier discovery and qualification against the BOMForge index, inside Claude Code: a `/bomforge` skill that knows how to use the tools, plus the tools themselves over MCP.
+Find a shop that can build your part. Give BOMForge the material, process, location, and any required certifications. Compare candidate manufacturers inside Claude Code or Codex, review the evidence for each match, and identify the questions to ask before requesting a quote.
 
-Requires a BOMForge API key. Workspace administrators configure scoped keys at https://bomforge.com/settings/api.
+**Try a sourcing question**
+
+> Find US fabricators for a 304 stainless process tank. Show the fabrication city and published size limits for each shop. Which shops should I ask about installed height and one-piece delivery?
+
+**Have a part to source?** [Request an invitation](https://bomforge.com/contact) with a short description of the part and where it needs to go. If you want BOMForge to manage sourcing, we can scope a request for quote and compare supplier responses on price, freight, and lead time.
+
+**Already a client?** Ask your workspace administrator for a scoped API key. Administrators can manage keys in [workspace settings](https://bomforge.com/settings/api).
 
 ## Install in Claude Code
 
