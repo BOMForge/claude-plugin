@@ -20,6 +20,22 @@ Restart Claude Code, then:
 
 or just ask in plain language; the skill is picked up automatically when the task is about suppliers.
 
+## BOM-1 supplier comparison
+
+Run `/bomforge:bom-1` followed by a purchasing brief. BOM-1 searches for manufacturers, checks evidence for their capabilities, and gives you a shortlist with sources and the questions to take to each shop.
+
+```text
+/bomforge:bom-1 Find US shops for a custom 304 stainless tank. Which published dimensions are shop limits, and what can ship in one piece?
+```
+
+From a local checkout, launch an interactive session with your existing BOMForge key:
+
+```bash
+./bin/bom-1 "Find US shops for a custom 304 stainless tank"
+```
+
+The launcher uses your signed-in Claude Code installation. Running it without a brief opens the purchasing intake.
+
 ## Install in Codex
 
 Set `BOMFORGE_API_KEY` in the environment that launches Codex, then install:

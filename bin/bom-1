@@ -1,0 +1,20 @@
+#!/usr/bin/env python3
+"""Open a Claude Code session with the BOM-1 skill from this checkout."""
+import os
+import shutil
+import sys
+from pathlib import Path
+
+if sys.argv[1:] in (["--help"], ["-h"]):
+    print("Usage: bom-1 [purchasing brief]\nOpen a BOM-1 supplier comparison in Claude Code.")
+    sys.exit(0)
+
+claude = shutil.which("claude")
+if not claude:
+    sys.exit("Install Claude Code and sign in before starting BOM-1.")
+if not os.environ.get("BOMFORGE_API_KEY"):
+    sys.exit("Set BOMFORGE_API_KEY to your scoped BOMForge workspace key.")
+
+plugin = Path(__file__).resolve().parents[1]
+brief = " ".join(sys.argv[1:]).strip() or "Ask me for my purchasing brief."
+os.execv(claude, [claude, "--plugin-dir", str(plugin), "/bomforge:bom-1 " + brief])
