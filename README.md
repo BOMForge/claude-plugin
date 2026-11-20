@@ -34,6 +34,8 @@ From a local checkout, launch an interactive session with your existing BOMForge
 ./bin/bom-1 "Find US shops for a custom 304 stainless tank"
 ```
 
+For a screen share, use `./bin/bom-1 --preview "your purchasing question"`. Preview runs a single Claude Code request and shows the research actions and final answer. Keep the interactive launcher for follow-up questions.
+
 The launcher uses your signed-in Claude Code installation. Running it without a brief opens the purchasing intake.
 
 ## Install in Codex

@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 """Open a Claude Code session with the BOM-1 skill from this checkout."""
+import json
 import os
+import subprocess
+import textwrap
 import shutil
 import sys
 from pathlib import Path
 
 if sys.argv[1:] in (["--help"], ["-h"]):
-    print("Usage: bom-1 [purchasing brief]\nOpen a BOM-1 supplier comparison in Claude Code.")
+    print("Usage: bom-1 [--preview] [purchasing brief]\nOpen a BOM-1 supplier comparison in Claude Code.")
     sys.exit(0)
 
 claude = shutil.which("claude")
@@ -16,5 +19,62 @@ if not os.environ.get("BOMFORGE_API_KEY"):
     sys.exit("Set BOMFORGE_API_KEY to your scoped BOMForge workspace key.")
 
 plugin = Path(__file__).resolve().parents[1]
-brief = " ".join(sys.argv[1:]).strip() or "Ask me for my purchasing brief."
-os.execv(claude, [claude, "--plugin-dir", str(plugin), "/bomforge:bom-1 " + brief])
+preview = sys.argv[1:2] == ["--preview"]
+args = sys.argv[2:] if preview else sys.argv[1:]
+brief = " ".join(args).strip()
+if preview and not brief:
+    sys.exit("Give --preview a purchasing question.")
+brief = brief or "Ask me for my purchasing brief."
+color = sys.stdout.isatty() and "NO_COLOR" not in os.environ
+def accent(value):
+    return "\033[38;5;203m" + value + "\033[0m" if color else value
+
+if sys.stdout.isatty():
+    print(accent("  ___   ___  __  __       _ \n | _ ) / _ \\|  \\/  | ___ / |\n | _ \\| (_) | |\\/| ||___|| |\n |___/ \\___/|_|  |_|    |_|"))
+    print(" BOMForge  /  Supplier intelligence in Claude Code\n", flush=True)
+prompt = "/bomforge:bom-1 " + brief
+if not preview:
+    os.execv(claude, [claude, "--plugin-dir", str(plugin), prompt])
+
+def show(value):
+    # Tool outputs are third-party data. Only emit printable text to the terminal.
+    width = min(90, max(30, shutil.get_terminal_size().columns - 4))
+    for line in value.splitlines():
+        clean = "".join(c for c in line if c.isprintable())
+        print(textwrap.fill(clean, width=width, break_on_hyphens=False) if clean else "")
+    sys.stdout.flush()
+
+print(accent("REQUEST"), flush=True)
+show(brief)
+print("\n" + accent("LIVE RESEARCH"), flush=True)
+checker = plugin / "skills/bom-1/scripts/check-profile"
+allowed = ["WebSearch", "WebFetch", "Skill", f"Bash({checker} *)"]
+allowed += ["mcp__bomforge__" + name for name in (
+    "search_suppliers", "get_supplier_profile", "match_parts_to_suppliers", "search_sourcing_brief")]
+command = [claude, "-p", prompt, "--plugin-dir", str(plugin), "--strict-mcp-config",
+           "--mcp-config", str(plugin / ".mcp.json"), "--permission-mode", "dontAsk",
+           "--tools", "Skill,WebSearch,WebFetch,Bash", "--allowedTools", ",".join(allowed),
+           "--verbose", "--output-format", "stream-json", "--no-session-persistence"]
+finished = False
+with subprocess.Popen(command, stdout=subprocess.PIPE, text=True) as child:
+    try:
+        for line in child.stdout:
+            event = json.loads(line)
+            if event.get("type") == "assistant":
+                for block in event.get("message", {}).get("content", []):
+                    if block.get("type") == "tool_use":
+                        name = block["name"].split("__")[-1]
+                        labels = {"get_supplier_profile": "Lookup supplier record",
+                                  "search_suppliers": "Search manufacturers",
+                                  "WebFetch": "Read source page", "WebSearch": "Search public sources",
+                                  "Bash": "Request local check"}
+                        show("  > " + labels.get(name, name))
+            if event.get("type") == "result":
+                finished = not event.get("is_error", True)
+                print("\n" + accent("FINDINGS" if finished else "RESEARCH INCOMPLETE"), flush=True)
+                show(event.get("result", ""))
+    except KeyboardInterrupt:
+        child.terminate()
+        sys.exit(130)
+    status = child.wait()
+sys.exit(status or (0 if finished else 1))
